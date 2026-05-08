@@ -6,8 +6,7 @@ Một trò chơi được lập trình bằng Python dựa trên thư viện Pyg
 Đây là một đồ án phần mềm môn Python của trường HUBT
 
 
-** == Trong game có gì? == **
-
+**== Trong game có gì? ==**
 
 Một game Rắn cực kỳ đơn giản, chơi bằng các phím mũi tên hay WASD truyền thống.
 
