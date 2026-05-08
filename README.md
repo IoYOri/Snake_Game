@@ -2,6 +2,7 @@
 <img width="40" height="40" alt="apple" src="https://github.com/user-attachments/assets/5651e442-ed4e-41bd-a65e-c23247024fbc" />
 
 Một trò chơi được lập trình bằng Python dựa trên thư viện Pygame
+
 Đây là một đồ án phần mềm môn Python của trường HUBT
 
 
