@@ -12,6 +12,7 @@ Giao diện đơn giản, có hệ thống Menu và màn hình Gameover.
 
 == Bản Quyền ==
 
-Code được dựa vào video của Youtuber ClearCode: https://www.youtube.com/@ClearCode, Sound được lấy từ game Google Snake
+Code được dựa vào video của Youtuber ClearCode: https://www.youtube.com/@ClearCode
+Sound được lấy từ game Google Snake
 Ngoài ra, còn được hỗ trợ bởi một số diễn đàn như Reddit, Facebook,....
 Tất cả code sẽ được chia sẻ miễn phí, không có bản quyền!
