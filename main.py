@@ -21,7 +21,7 @@ class FRUIT:
         self.pos = Vector2(self.x, self.y) #Su dung Vecto 2 chieu giup khai trien cac logic di chuyen doi tuong de dang hon so voi viec dung List
         
 class SNAKE:
-    def __init__ (self):
+    def __init__ (self, volume):
         self.body = [Vector2(7, 10), Vector2(6, 10), Vector2(5, 10)]
         self.direction = Vector2(1, 0) #Vecto di chuyen phai
         self.new_block = False
@@ -52,6 +52,13 @@ class SNAKE:
         self.up_sound = pygame.mixer.Sound('Sound/up.mp3')
         self.down_sound = pygame.mixer.Sound('Sound/down.mp3')
         self.gameover_sound = pygame.mixer.Sound('Sound/gameover.mp3')
+
+        self.crunch_sound.set_volume(volume)
+        self.right_sound.set_volume(volume)
+        self.left_sound.set_volume(volume)
+        self.up_sound.set_volume(volume)
+        self.down_sound.set_volume(volume)
+        self.gameover_sound.set_volume(volume)
 
     def draw_snake(self):
         self.update_head_graphics()
@@ -146,10 +153,10 @@ class SNAKE:
         self.direction = Vector2(0, 0) # Khong di chuyen
 
 class MAIN:
-    def __init__(self):
-        self.snake = SNAKE()
+    def __init__(self, volume):
         self.fruit = FRUIT()
         self.state = "PLAYING"
+        self.snake = SNAKE(volume)
         self.retry_rect = pygame.Rect(300, 380, 200, 60)
         self.menu_rect = pygame.Rect(300, 460, 200, 60)
         #Khi tao doi tuong tu Class MAIN thi luon co hai doi tuong tu hai Class SNAKE va FRUIT
@@ -249,24 +256,35 @@ class MAIN:
 
             if not self.snake.direction_locked: # Kiem tra khong cho hai phim nhan cung 1 luc
 
+                new_direction = None
                 if (event.key == pygame.K_w or event.key == pygame.K_UP) and self.snake.direction.y != 1: # Neu la phim w hay mui ten len, Kiem tra neu y la 1 thi khong input di len
-                    self.snake.direction = Vector2(0, -1) # X khong doi, Y giam thi ran di len
-                    self.snake.up_sound.play()
-                    self.snake.direction_locked = True
+                    # X khong doi, Y giam thi ran di len
+                    new_direction = Vector2(0, -1)
 
                 elif (event.key == pygame.K_s or event.key == pygame.K_DOWN) and self.snake.direction.y != -1: # Neu la phim s hay mui ten xuong, Kiem tra neu y la -1 thi khong input di xuong
-                    self.snake.direction = Vector2(0, 1) # X khong doi, Y tang thi ran di xuong
-                    self.snake.down_sound.play()
-                    self.snake.direction_locked = True
-
+                    # X khong doi, Y tang thi ran di xuong
+                    new_direction = Vector2(0, 1)
+                    
                 elif (event.key == pygame.K_a or event.key == pygame.K_LEFT) and self.snake.direction.x != 1: # Neu la phim a hay mui ten trai, Kiem tra neu x la 1 thi khong input sang trai
-                    self.snake.direction = Vector2(-1, 0) # Y khong doi, X giam thi ran di sang trai
-                    self.snake.left_sound.play()
-                    self.snake.direction_locked = True
+                    # Y khong doi, X giam thi ran di sang trai
+                    new_direction = Vector2(-1, 0)
 
                 elif (event.key == pygame.K_d or event.key == pygame.K_RIGHT) and self.snake.direction.x != -1: # Neu la phim d hay mui ten phai, Kiem tra neu x la -1 thi khong input di phai
-                    self.snake.direction = Vector2(1, 0) # Y khong doi, X tang thi ran di sang phai
-                    self.snake.right_sound.play()
+                    # Y khong doi, X tang thi ran di sang phai
+                    new_direction = Vector2(1, 0)
+
+                if new_direction and new_direction != self.snake.direction:
+                    self.snake.direction = new_direction
+                    
+                    if new_direction == Vector2(0, -1):
+                        self.snake.up_sound.play()
+                    elif new_direction == Vector2(0, 1):
+                        self.snake.down_sound.play()
+                    elif new_direction == Vector2(-1, 0):
+                        self.snake.left_sound.play()
+                    elif new_direction == Vector2(1, 0):
+                        self.snake.right_sound.play()
+
                     self.snake.direction_locked = True
 
         if event.type == pygame.MOUSEBUTTONDOWN:
@@ -283,7 +301,7 @@ class MAIN:
         overlay.set_alpha(180)
         overlay.fill((0, 0, 0))
         screen.blit(overlay, (0, 0))
-
+                
         score = len(self.snake.body) - 3
 
         game_over_text = lagle_font.render("GAME OVER", True, (255,255,255))
@@ -312,6 +330,8 @@ class MAIN:
 pygame.mixer.pre_init(44100, -16, 2 ,512) #pygame.mixer.pre_init chiu trach nhiem trong viec khong lam am thanh bi delay
 pygame.init() # Khoi dong module pygame 
 
+volume = 0.5
+brightness = 1
 cell_size = 40 #Kich thuoc o (40 px)
 cell_number = 20 #So luong o tren 1 hang (Hoac cot)
 screen = pygame.display.set_mode((cell_size * cell_number, cell_size * cell_number)) #Cua so tro choi
@@ -322,13 +342,15 @@ lagle_font = pygame.font.Font('Font/PoetsenOne-Regular.ttf', 40)
 
 pygame.display.set_caption('SnakeGame')
 pygame.display.set_icon(apple)
-main_game = MAIN()
+main_game = None
 
 SCREEN_UPDATE = pygame.USEREVENT #Su kien cho ran di chuyen
 pygame.time.set_timer(SCREEN_UPDATE, 100) #Su kien se kich hoat sau 150 mili giay
 
-def run_game():
+def run_game(volume, brightness):
     global event
+    global main_game
+    main_game = MAIN(volume)
 
     while True:
         for event in pygame.event.get():
@@ -341,9 +363,15 @@ def run_game():
             result = main_game.input()
             if result == "MENU":
                 return
-
+            
         screen.fill((175,215,70))
         main_game.draw_elements()
+
+        overlay = pygame.Surface(screen.get_size())
+        overlay.fill((0,0,0))
+        overlay.set_alpha(int((1 - brightness) * 255))
+        screen.blit(overlay, (0,0))
+
         pygame.display.update()
         clock.tick(60)
         
