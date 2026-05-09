@@ -14,7 +14,8 @@ background = pygame.image.load("Graphics/background.png").convert_alpha()
 background = pygame.transform.scale(background, (WIDTH, HEIGHT))
 
 font_title = pygame.font.Font('Font/PoetsenOne-Regular.ttf', 80)
-font_button = pygame.font.Font('Font/PoetsenOne-Regular.ttf', 50)
+font_button = pygame.font.Font('Font/PoetsenOne-Regular.ttf', 38)
+how_to_play = pygame.font.Font('Font/PoetsenOne-Regular.ttf', 20)
 
 WHITE = (255, 255, 255)
 GRAY = (100, 100, 100)
@@ -36,6 +37,9 @@ def draw_menu():
     play_text = font_button.render("PLAY", True, WHITE)
     quit_text = font_button.render("QUIT", True, WHITE)
 
+    how_to_play_text = how_to_play.render("TIP: You can play using the WASD keys or the arrow keys.", True, DARK)
+    screen.blit(how_to_play_text, how_to_play_text.get_rect(center=(WIDTH//2, HEIGHT - 50)))
+
     screen.blit(play_text, play_text.get_rect(center=play_rect.center))
     screen.blit(quit_text, quit_text.get_rect(center=quit_rect.center))
 
@@ -47,6 +51,7 @@ while True:
 
         if event.type == pygame.MOUSEBUTTONDOWN:
             if play_rect.collidepoint(event.pos):
+                main.main_game = main.MAIN()
                 main.run_game()
 
             if quit_rect.collidepoint(event.pos):
