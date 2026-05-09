@@ -53,12 +53,15 @@ class SNAKE:
         self.down_sound = pygame.mixer.Sound('Sound/down.mp3')
         self.gameover_sound = pygame.mixer.Sound('Sound/gameover.mp3')
 
-        self.crunch_sound.set_volume(volume)
-        self.right_sound.set_volume(volume)
-        self.left_sound.set_volume(volume)
-        self.up_sound.set_volume(volume)
-        self.down_sound.set_volume(volume)
-        self.gameover_sound.set_volume(volume)
+        try:
+            self.crunch_sound.set_volume(volume)
+            self.right_sound.set_volume(volume)
+            self.left_sound.set_volume(volume)
+            self.up_sound.set_volume(volume)
+            self.down_sound.set_volume(volume)
+            self.gameover_sound.set_volume(volume)
+        except pygame.error():
+            print("Cannot load sound - Không load được âm thanh")
 
     def draw_snake(self):
         self.update_head_graphics()
@@ -328,7 +331,12 @@ class MAIN:
         self.state = "PLAYING"
 
 pygame.mixer.pre_init(44100, -16, 2 ,512) #pygame.mixer.pre_init chiu trach nhiem trong viec khong lam am thanh bi delay
-pygame.init() # Khoi dong module pygame 
+pygame.init() # Khoi dong module pygame
+
+try:
+    pygame.mixer.init()
+except pygame.error:
+    print("Mixer not initialized - Không thể khởi tạo mixer")
 
 volume = 0.5
 brightness = 1
